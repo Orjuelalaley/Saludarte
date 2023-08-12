@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SaludarteApp</string>
+    <string name="Register">Registrarse</string>
+    <string-array name="alarms">
+            <item>Aviso para despertar</item>
+            <item>Desayunar</item>
+            <item>Almorzar</item>
+            <item>Comer</item>
+            <item>Descanso</item>
+            <item>Actividad</item>
+            <item>Clase</item>
+            <item>Dormir</item>
+        </string-array>
+</resources>
