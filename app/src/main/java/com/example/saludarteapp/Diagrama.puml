@@ -1,0 +1,17 @@
+@startuml
+class MainActivity {
+  void onCreate(Bundle savedInstanceState)
+}
+
+class LogInActivity {
+  void onCreate(Bundle savedInstanceState)
+}
+
+class RegisterActivity {
+  void onCreate(Bundle savedInstanceState)
+}
+
+class AlarmActivity {
+  void onCreate(Bundle savedInstanceState)
+}
+@enduml
