@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">SaludarteApp</string>
     <string name="Register">Registrarse</string>
+    <string name="correo">Correo</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="registrar">Registrarse</string>
+    <string name="titulo">Saludarte</string>
     <string-array name="alarms">
             <item>Aviso para despertar</item>
             <item>Desayunar</item>
