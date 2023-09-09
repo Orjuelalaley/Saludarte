@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "382092423450",
+    "firebase_url": "https://saludarteapp-39ebc-default-rtdb.firebaseio.com",
+    "project_id": "saludarteapp-39ebc",
+    "storage_bucket": "saludarteapp-39ebc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382092423450:android:7949f1dc17a312878efca3",
+        "android_client_info": {
+          "package_name": "com.example.saludarteapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382092423450-8ut4oqtrs0pt4usj7l5lupe0ict8gjf3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5_Qq8ciIEnFUI_8BPbQA80XqMYwqGsWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382092423450-8ut4oqtrs0pt4usj7l5lupe0ict8gjf3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
