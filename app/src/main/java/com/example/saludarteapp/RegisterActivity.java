@@ -8,14 +8,18 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.saludarteapp.databinding.ActivityRegisterBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class RegisterActivity extends AppCompatActivity {
+import java.util.Objects;
 
+public class RegisterActivity extends AppCompatActivity {
+    private ActivityRegisterBinding binding;
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText;
     private Button registerButton;
@@ -24,18 +28,12 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-        // Inicializa FirebaseAuth
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         mAuth = FirebaseAuth.getInstance();
-
         // Referencias a los elementos de la UI
-        emailEditText = findViewById(R.id.et_registerEmail);
-        passwordEditText = findViewById(R.id.et_registerPassword);
-        registerButton = findViewById(R.id.btn_completeRegistration);
-
         // Agregar listener al botón de registro
-        registerButton.setOnClickListener(view -> {
-            String email = emailEditText.getText().toString();
+        binding.btnCompleteRegistration.setOnClickListener(view -> {
+            String email = binding.emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             registerUser(email, password);
         });
@@ -58,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         } else {
                             // Registro fallido
-                            Toast.makeText(RegisterActivity.this, "Registro fallido: " + task.getException().getMessage(),
+                            Toast.makeText(RegisterActivity.this, "Registro fallido: " + Objects.requireNonNull(task.getException()).getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
