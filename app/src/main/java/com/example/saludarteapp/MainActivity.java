@@ -64,17 +64,34 @@ public class MainActivity extends AppCompatActivity {
                 Sound clickedSound = soundList.get(position);
 
                 if (clickedSound.getName() != null) {
-                    // Cambiar el estado del sonido en Firebase Realtime Database
-                    mDatabase.child("sounds").child(clickedSound.getName()).child("status").setValue(true);
+                    // Leer el estado actual del campo "status"
+                    DatabaseReference statusRef = mDatabase.child("sounds").child(clickedSound.getName()).child("status");
+                    statusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Boolean currentStatus = dataSnapshot.getValue(Boolean.class);
+                            if (currentStatus != null) {
+                                // Cambiar el estado al valor opuesto
+                                statusRef.setValue(!currentStatus);
 
-                    // Mostrar un Toast
-                    Toast.makeText(MainActivity.this, "Has clickeado en: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+                                // Mostrar un Toast
+                                Toast.makeText(MainActivity.this, "Has cambiado el estado de: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Código para manejar errores
+                            Toast.makeText(MainActivity.this, "Error al cambiar el estado.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     // Mostrar un mensaje de error
                     Toast.makeText(MainActivity.this, "El sonido clickeado tiene un nombre nulo.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
     }
 }

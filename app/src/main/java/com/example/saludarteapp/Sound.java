@@ -29,4 +29,8 @@ public class Sound {
     public void setStatus(boolean status) {
         this.status = status;
     }
+    @Override
+    public String toString() {
+        return name;
+    }
 }
