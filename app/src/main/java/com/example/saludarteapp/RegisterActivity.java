@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.saludarteapp.databinding.ActivityRegisterBinding;
@@ -23,44 +24,22 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText;
     private Button registerButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        progressBar = new ProgressBar(this);
         mAuth = FirebaseAuth.getInstance();
-        // Referencias a los elementos de la UI
-        // Agregar listener al botón de registro
-        binding.btnCompleteRegistration.setOnClickListener(view -> {
-            String email = binding.emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            registerUser(email, password);
-        });
+        binding.btnCompleteRegistration.setOnClickListener(v -> registerUser());
+
     }
 
-    private void registerUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Registro exitoso
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(RegisterActivity.this, "Registro exitoso.", Toast.LENGTH_SHORT).show();
+    private void registerUser() {
 
-                            // Lanzar MainActivity
-                            Intent mainActivityIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(mainActivityIntent);
-                            finish();  // Opcional - si quieres que el usuario no pueda volver a esta actividad
-
-                        } else {
-                            // Registro fallido
-                            Toast.makeText(RegisterActivity.this, "Registro fallido: " + Objects.requireNonNull(task.getException()).getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
 }
