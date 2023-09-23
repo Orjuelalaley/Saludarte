@@ -6,6 +6,9 @@
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="registrar">Registrarse</string>
     <string name="titulo">Saludarte</string>
+    <string name="mail_error_label">El email no puede estar vacio.</string>
+    <string name="error_email_label">El email no es valido.</string>
+    <string name="error_pass_label">El password no puede estar vacio.</string>
     <string-array name="alarms">
             <item>Aviso para despertar</item>
             <item>Desayunar</item>
