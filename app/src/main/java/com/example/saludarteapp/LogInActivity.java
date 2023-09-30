@@ -24,7 +24,6 @@ import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity {
     private ActivityLogInBinding binding;
-    private FirebaseAuth mAuth;
     FirebaseApp firebaseApp;
     ProgressDialog progressDialog;
     private static final int TIME_INTERVAL = 2000;
@@ -59,7 +58,7 @@ public class LogInActivity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString();
         progressDialog.setMessage("Iniciando Sesión...");
         progressDialog.show();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(authResult -> {
             progressDialog.cancel();
             startActivity(new Intent(LogInActivity.this, MainActivity.class));
