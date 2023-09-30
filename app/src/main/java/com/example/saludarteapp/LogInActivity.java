@@ -2,75 +2,82 @@ package com.example.saludarteapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.saludarteapp.databinding.ActivityLogInBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LogInActivity extends AppCompatActivity {
+import java.util.Objects;
 
+public class LogInActivity extends AppCompatActivity {
+    private ActivityLogInBinding binding;
     private FirebaseAuth mAuth;
-    private EditText emailEditText, passwordEditText;
-    private Button loginButton, registerButton;
+    FirebaseApp firebaseApp;
+    ProgressDialog progressDialog;
+    private static final int TIME_INTERVAL = 2000;
+    private long mBackPressed;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log_in);
+        binding = ActivityLogInBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        firebaseApp = FirebaseApp.initializeApp(this);
+        progressDialog = new ProgressDialog(this);
+        binding.btnSignIn.setOnClickListener(v -> loginUser());
+        binding.btnRegister.setOnClickListener(v -> startActivity(new Intent(LogInActivity.this, RegisterActivity.class)));
+    }
 
-        // Inicializa FirebaseAuth
+    private void loginUser() {
+        if(Objects.requireNonNull(binding.etEmail).getText().toString().isEmpty() ) {
+            binding.btnSignIn.setError(getString(R.string.mail_error_label));
+            return;
+        }else binding.etEmail.setError(null);
+        if(!Patterns.EMAIL_ADDRESS.matcher(binding.etEmail.getText().toString()).matches()){
+                binding.etEmail.setError(getString(R.string.error_email_label));
+                return;
+        }else binding.etEmail.setError(null);
+        if (Objects.requireNonNull(binding.etPassword).getText().toString().isEmpty()) {
+                binding.etPassword.setError(getString(R.string.error_pass_label));
+                return;
+        }else binding.etPassword.setError(null);
+        String email = binding.etEmail.getText().toString();
+        String password = binding.etPassword.getText().toString();
+        progressDialog.setMessage("Iniciando Sesión...");
+        progressDialog.show();
         mAuth = FirebaseAuth.getInstance();
-
-        // Referencias a los elementos de la UI
-        emailEditText = findViewById(R.id.et_email);
-        passwordEditText = findViewById(R.id.et_password);
-        loginButton = findViewById(R.id.btn_sign_in);
-        registerButton = findViewById(R.id.btn_register);
-
-        // Agregar listener al botón de inicio de sesión
-        loginButton.setOnClickListener(view -> {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            loginUser(email, password);
-        });
-
-        // Agregar listener al botón de registro
-        registerButton.setOnClickListener(view -> {
-            // Crear un nuevo Intent para abrir RegisterActivity
-            Intent registerIntent = new Intent(LogInActivity.this, RegisterActivity.class);
-            // Iniciar RegisterActivity
-            startActivity(registerIntent);
+        mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(authResult -> {
+            progressDialog.cancel();
+            startActivity(new Intent(LogInActivity.this, MainActivity.class));
+            finish();
+        }).addOnFailureListener(e -> {
+            progressDialog.cancel();
+            Snackbar.make(binding.getRoot(), "Error al iniciar sesión", Snackbar.LENGTH_LONG).show();
         });
     }
 
-    private void loginUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Inicio de sesión exitoso
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LogInActivity.this, "Inicio de sesión exitoso.", Toast.LENGTH_SHORT).show();
-
-                            // Lanzar MainActivity
-                            Intent mainActivityIntent = new Intent(LogInActivity.this, MainActivity.class);
-                            startActivity(mainActivityIntent);
-                            finish();  // Opcional - si quieres que el usuario no pueda volver a esta actividad
-
-                        } else {
-                            // Inicio de sesión fallido
-                            Toast.makeText(LogInActivity.this, "Inicio de sesión fallido: " + task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    @Override
+    public void onBackPressed() {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
+            super.onBackPressed();
+            return;
+        } else {
+            Toast.makeText(getBaseContext(), "Presiona de nuevo para salir", Toast.LENGTH_SHORT).show();
+        }
+        mBackPressed = System.currentTimeMillis();
     }
-
 }
