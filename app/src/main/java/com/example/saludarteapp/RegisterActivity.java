@@ -56,8 +56,6 @@ public class RegisterActivity extends AppCompatActivity {
                 binding.btnCompleteRegistration.setVisibility(View.VISIBLE);
                 binding.etRegisterEmail.setText("");
                 binding.etRegisterPassword.setText("");
-                DatabaseReference userRef = db.getReference("Users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-                userRef.setValue(user);
     }
         });
     }
