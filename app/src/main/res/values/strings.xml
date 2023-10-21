@@ -9,6 +9,10 @@
     <string name="mail_error_label">El email no puede estar vacio.</string>
     <string name="error_email_label">El email no es valido.</string>
     <string name="error_pass_label">El password no puede estar vacio.</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Contraseña</string>
+    <string name="confirm_password_label">Vuelve a ingresar la contraseña</string>
     <string-array name="alarms">
             <item>Aviso para despertar</item>
             <item>Desayunar</item>
