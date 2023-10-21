@@ -13,6 +13,7 @@
     <string name="email_label">Email</string>
     <string name="password_label">Contraseña</string>
     <string name="confirm_password_label">Vuelve a ingresar la contraseña</string>
+    <string name="action_logout">Cerrar Sesión\n</string>
     <string-array name="alarms">
             <item>Aviso para despertar</item>
             <item>Desayunar</item>

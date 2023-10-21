@@ -57,9 +57,7 @@ public class LogInActivity extends AppCompatActivity {
         if (Objects.requireNonNull(binding.etPassword).getText().toString().isEmpty()) {
                 binding.etPassword.setError(getString(R.string.error_pass_label));
                 return;
-        }else binding.etPassword.setError(null
-
-        );
+        }else binding.etPassword.setError(null);
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword.getText().toString();
         progressDialog.setMessage("Iniciando Sesión...");
