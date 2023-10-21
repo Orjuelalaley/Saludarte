@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Patterns;
@@ -25,6 +26,8 @@ import java.util.Objects;
 public class LogInActivity extends AppCompatActivity {
     private ActivityLogInBinding binding;
     FirebaseApp firebaseApp;
+
+    private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
     private static final int TIME_INTERVAL = 2000;
     private long mBackPressed;
@@ -35,6 +38,7 @@ public class LogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLogInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mAuth = FirebaseAuth.getInstance();
         firebaseApp = FirebaseApp.initializeApp(this);
         progressDialog = new ProgressDialog(this);
         binding.btnSignIn.setOnClickListener(v -> loginUser());
@@ -53,12 +57,13 @@ public class LogInActivity extends AppCompatActivity {
         if (Objects.requireNonNull(binding.etPassword).getText().toString().isEmpty()) {
                 binding.etPassword.setError(getString(R.string.error_pass_label));
                 return;
-        }else binding.etPassword.setError(null);
+        }else binding.etPassword.setError(null
+
+        );
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword.getText().toString();
         progressDialog.setMessage("Iniciando Sesión...");
         progressDialog.show();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(authResult -> {
             progressDialog.cancel();
             startActivity(new Intent(LogInActivity.this, MainActivity.class));
