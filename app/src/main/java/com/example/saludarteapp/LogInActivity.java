@@ -38,6 +38,8 @@ public class LogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLogInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
         mAuth = FirebaseAuth.getInstance();
         firebaseApp = FirebaseApp.initializeApp(this);
         progressDialog = new ProgressDialog(this);
@@ -64,6 +66,7 @@ public class LogInActivity extends AppCompatActivity {
         progressDialog.show();
         mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(authResult -> {
             progressDialog.cancel();
+
             startActivity(new Intent(LogInActivity.this, MainActivity.class));
             finish();
         }).addOnFailureListener(e -> {

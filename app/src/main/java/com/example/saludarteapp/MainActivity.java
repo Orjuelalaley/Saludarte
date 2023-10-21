@@ -1,4 +1,5 @@
 package com.example.saludarteapp;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -9,9 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import com.example.saludarteapp.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,12 +23,13 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Sound> soundList;
     private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         soundList = new ArrayList<>();
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDatabase.child("sounds").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 soundList.clear();
                 for (DataSnapshot soundSnapshot : dataSnapshot.getChildren()) {
                     Sound sound = soundSnapshot.getValue(Sound.class);
@@ -98,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
-            // Aquí debes implementar la lógica para cerrar la sesión
-            // Por ejemplo, puedes llamar a un método performLogout().
             performLogout();
             return true;
         }
@@ -107,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void performLogout() {
-        // Agrega la lógica para cerrar la sesión aquí.
-        // Puedes utilizar Firebase Authentication para cerrar la sesión.
+        mAuth.signOut(); // Cerrar la sesión de Firebase
+        Intent intent = new Intent(this, LogInActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
