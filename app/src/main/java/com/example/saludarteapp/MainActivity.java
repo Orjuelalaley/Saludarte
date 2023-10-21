@@ -1,6 +1,7 @@
 package com.example.saludarteapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,74 +25,67 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializar la referencia de la base de datos de Firebase
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        // Inicializar el ArrayList
         soundList = new ArrayList<>();
 
-        // Enlazar el ListView con el ArrayList usando un ArrayAdapter
         final ListView soundListView = findViewById(R.id.lv_soundList);
         final ArrayAdapter<Sound> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, soundList);
         soundListView.setAdapter(arrayAdapter);
 
-        // Leer los sonidos desde Firebase
-        // Leer los sonidos desde Firebase
         mDatabase.child("sounds").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                soundList.clear();  // Vaciar la lista antes de agregar nuevos elementos
+                soundList.clear();
                 for (DataSnapshot soundSnapshot : dataSnapshot.getChildren()) {
                     Sound sound = soundSnapshot.getValue(Sound.class);
+                    sound.setId(soundSnapshot.getKey()); // Establece el identificador único del sonido
                     soundList.add(sound);
                 }
-                arrayAdapter.notifyDataSetChanged();  // Notificar al adaptador que los datos han cambiado
+                arrayAdapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Código para manejar errores
+                Log.e("DEBUG", "Error al leer sonidos: " + databaseError.getMessage());
             }
         });
 
-
-        // Agregar un OnClickListener al ListView
-        // Agregar un OnClickListener al ListView
         soundListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Obtener el sonido clickeado
                 Sound clickedSound = soundList.get(position);
+                Log.d("DEBUG", "Sonido seleccionado: " + clickedSound.getName());
 
-                if (clickedSound.getName() != null) {
-                    // Leer el estado actual del campo "status"
-                    DatabaseReference statusRef = mDatabase.child("sounds").child(clickedSound.getName()).child("status");
+                if (clickedSound.getId() != null) {
+                    DatabaseReference statusRef = mDatabase.child("sounds").child(clickedSound.getId()).child("status");
                     statusRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Boolean currentStatus = dataSnapshot.getValue(Boolean.class);
-                            if (currentStatus != null) {
-                                // Cambiar el estado al valor opuesto
-                                statusRef.setValue(!currentStatus);
+                            Log.d("DEBUG", "Estado actual: " + currentStatus);
 
-                                // Mostrar un Toast
+                            if (currentStatus == null) {
+                                Log.d("DEBUG", "Inicializando estado para: " + clickedSound.getName());
+                                statusRef.setValue(false);
+                                Toast.makeText(MainActivity.this, "Estado inicializado para: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                statusRef.setValue(!currentStatus);
                                 Toast.makeText(MainActivity.this, "Has cambiado el estado de: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            // Código para manejar errores
+                            Log.e("DEBUG", "Error al obtener el estado: " + databaseError.getMessage());
                             Toast.makeText(MainActivity.this, "Error al cambiar el estado.", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
-                    // Mostrar un mensaje de error
-                    Toast.makeText(MainActivity.this, "El sonido clickeado tiene un nombre nulo.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "El sonido clickeado tiene un identificador nulo.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
 
     }
 }
