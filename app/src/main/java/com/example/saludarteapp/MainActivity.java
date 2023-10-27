@@ -1,6 +1,7 @@
 package com.example.saludarteapp;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         soundListView.setOnItemClickListener((parent, view, position, id) -> {
+            // Deshabilitar el ListView para evitar clics adicionales
+            soundListView.setEnabled(false);
+
             Sound clickedSound = soundList.get(position);
             Log.d("DEBUG", "Sonido seleccionado: " + clickedSound.getName());
 
@@ -68,13 +72,19 @@ public class MainActivity extends AppCompatActivity {
                         Boolean currentStatus = dataSnapshot.getValue(Boolean.class);
                         Log.d("DEBUG", "Estado actual: " + currentStatus);
 
-                        if (currentStatus == null) {
-                            Log.d("DEBUG", "Inicializando estado para: " + clickedSound.getName());
-                            statusRef.setValue(false);
-                            Toast.makeText(MainActivity.this, "Estado inicializado para: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+                        if (currentStatus == null || !currentStatus) {
+                            statusRef.setValue(true);
+                            Toast.makeText(MainActivity.this, "Reproduciendo: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+
+                            // Cambiar el estado a false y reactivar el ListView después de 10 segundos
+                            new Handler().postDelayed(() -> {
+                                statusRef.setValue(false);
+                                soundListView.setEnabled(true);
+                                Toast.makeText(MainActivity.this, "Puedes seleccionar otro sonido.", Toast.LENGTH_SHORT).show();
+                            }, 10000); // 10000 milisegundos = 10 segundos
                         } else {
-                            statusRef.setValue(!currentStatus);
-                            Toast.makeText(MainActivity.this, "Has cambiado el estado de: " + clickedSound.getName(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "El sonido ya está en reproducción. Espera 10 segundos.", Toast.LENGTH_SHORT).show();
+                            soundListView.setEnabled(true); // Reactivar si el sonido ya estaba en reproducción
                         }
                     }
 
@@ -82,12 +92,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.e("DEBUG", "Error al obtener el estado: " + databaseError.getMessage());
                         Toast.makeText(MainActivity.this, "Error al cambiar el estado.", Toast.LENGTH_SHORT).show();
+                        soundListView.setEnabled(true); // Reactivar en caso de error
                     }
                 });
             } else {
                 Toast.makeText(MainActivity.this, "El sonido clickeado tiene un identificador nulo.", Toast.LENGTH_SHORT).show();
+                soundListView.setEnabled(true); // Reactivar si el ID es nulo
             }
         });
+
     }
 
     @Override
